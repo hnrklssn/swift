@@ -171,8 +171,8 @@ public func myFunc8(_ ptr: RawSpan, _ span: Span<CInt>, _ count: CInt, _ size: C
 @__swiftmacro_4test7myFunc915_SwiftifyImportfMp_.swift
 ------------------------------
 /// This is an auto-generated wrapper for safer interop
-@_alwaysEmitIntoClient @_lifetime(copy span) @_lifetime(span: copy span) @_disfavoredOverload
-public func myFunc9(_ span: inout MutableSpan<CInt>) -> MutableSpan<CInt> {
+@_alwaysEmitIntoClient @_lifetime(copy span) @_disfavoredOverload
+public func myFunc9(_ span: consuming MutableSpan<CInt>) -> MutableSpan<CInt> {
     return unsafe _swiftifyOverrideLifetime(MutableSpan(_unsafeCxxSpan: span.withUnsafeMutableBufferPointer { _spanPtr in
       return unsafe myFunc9(MutableSpanOfInt(_spanPtr))
             }), copying: ())
@@ -181,8 +181,8 @@ public func myFunc9(_ span: inout MutableSpan<CInt>) -> MutableSpan<CInt> {
 @__swiftmacro_4test8myFunc1015_SwiftifyImportfMp_.swift
 ------------------------------
 /// This is an auto-generated wrapper for safer interop
-@_alwaysEmitIntoClient @_lifetime(copy `self`) @_lifetime(`self`: copy `self`) @_disfavoredOverload
-public func myFunc10(_ `self`: inout MutableSpan<CInt>) -> MutableSpan<CInt> {
+@_alwaysEmitIntoClient @_lifetime(copy `self`) @_disfavoredOverload
+public func myFunc10(_ `self`: consuming MutableSpan<CInt>) -> MutableSpan<CInt> {
     return unsafe _swiftifyOverrideLifetime(MutableSpan(_unsafeCxxSpan: `self`.withUnsafeMutableBufferPointer { _selfPtr in
       return unsafe myFunc10(MutableSpanOfInt(_selfPtr))
             }), copying: ())

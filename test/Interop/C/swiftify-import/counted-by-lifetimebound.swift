@@ -22,7 +22,7 @@
 
 // expected-experimental-expansion@+13:58{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func simple(_ len: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func simple(_ len: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
 //   expected-experimental-remark@3{{macro content: |    let len2 = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -37,7 +37,7 @@ int * __counted_by(len) simple(int len, int len2, int * p __counted_by(len2) __l
 
 // expected-experimental-expansion@+13:48{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func shared(_ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func shared(_ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
 //   expected-experimental-remark@3{{macro content: |    let len = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -52,7 +52,7 @@ int * __counted_by(len) shared(int len, int * p __counted_by(len) __lifetimeboun
 
 // expected-experimental-expansion@+13:84{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func complexExpr(_ len: Int32, _ offset: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func complexExpr(_ len: Int32, _ offset: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
 //   expected-experimental-remark@3{{macro content: |    let len2 = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -67,7 +67,7 @@ int * __counted_by(len - offset) complexExpr(int len, int offset, int len2, int 
 
 // expected-experimental-expansion@+13:103{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func nullUnspecified(_ len: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func nullUnspecified(_ len: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
 //   expected-experimental-remark@3{{macro content: |    let len2 = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -82,7 +82,7 @@ int * __counted_by(len) _Null_unspecified nullUnspecified(int len, int len2, int
 
 // expected-experimental-expansion@+13:77{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func nonnull(_ len: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func nonnull(_ len: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {|}}
 //   expected-experimental-remark@3{{macro content: |    let len2 = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -97,7 +97,7 @@ int * __counted_by(len) _Nonnull nonnull(int len, int len2, int * _Nonnull p __c
 
 // expected-experimental-expansion@+20:80{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func nullable(_ len: Int32, _ p: inout MutableSpan<Int32>?) -> MutableSpan<Int32>? {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func nullable(_ len: Int32, _ p: consuming MutableSpan<Int32>?) -> MutableSpan<Int32>? {|}}
 //   expected-experimental-remark@3{{macro content: |    let len2 = Int32(exactly: p?.count ?? 0)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p?.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -130,7 +130,7 @@ int * __counted_by(len) noncountedLifetime(int len, int * p __lifetimebound);
 
 // expected-experimental-expansion@+23:60{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func constant(_ p: inout MutableSpan<Int32>?) -> MutableSpan<Int32>? {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func constant(_ p: consuming MutableSpan<Int32>?) -> MutableSpan<Int32>? {|}}
 //   expected-experimental-remark@3{{macro content: |    let _pCount = p?.count ?? 0|}}
 //   expected-experimental-remark@4{{macro content: |    if _pCount != 13 {|}}
 //   expected-experimental-remark@5{{macro content: |      fatalError("bounds check failure in constant: expected \\(13) but got \\(_pCount)")|}}
@@ -167,7 +167,7 @@ struct EscapableStruct lifetimeboundEscapableReturn(int len, int * __counted_by(
 struct __attribute__((swift_attr("~Escapable"))) NonescapableStruct {};
 // expected-experimental-expansion@+13:93{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func lifetimeboundNonescapableReturn(_ p: inout MutableSpan<Int32>) -> NonescapableStruct {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func lifetimeboundNonescapableReturn(_ p: consuming MutableSpan<Int32>) -> NonescapableStruct {|}}
 //   expected-experimental-remark@3{{macro content: |    let len = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -182,7 +182,7 @@ struct NonescapableStruct lifetimeboundNonescapableReturn(int len, int * __count
 
 // expected-experimental-expansion@+13:150{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p, copy s) @_lifetime(p: copy p) @_disfavoredOverload public func lifetimeboundNonescapableReturnDoubleBounds(_ p: inout MutableSpan<Int32>, _ s: NonescapableStruct) -> NonescapableStruct {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p, copy s) @_disfavoredOverload public func lifetimeboundNonescapableReturnDoubleBounds(_ p: consuming MutableSpan<Int32>, _ s: NonescapableStruct) -> NonescapableStruct {|}}
 //   expected-experimental-remark@3{{macro content: |    let len = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -197,7 +197,7 @@ struct NonescapableStruct lifetimeboundNonescapableReturnDoubleBounds(int len, i
 
 // expected-experimental-expansion@+14:135{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func oneLifetimeboundOneEscapable(_ len: Int32, _ p: inout MutableSpan<Int32>, _ p2: UnsafeMutableBufferPointer<Int32>) -> MutableSpan<Int32> {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func oneLifetimeboundOneEscapable(_ len: Int32, _ p: consuming MutableSpan<Int32>, _ p2: UnsafeMutableBufferPointer<Int32>) -> MutableSpan<Int32> {|}}
 //   expected-experimental-remark@3{{macro content: |    let len2 = Int32(exactly: p.count)!|}}
 //   expected-experimental-remark@4{{macro content: |    let len3 = Int32(exactly: p2.count)!|}}
 //   expected-experimental-remark@5{{macro content: |    let _pPtr = p.withUnsafeMutableBufferPointer {|}}
@@ -218,7 +218,7 @@ module Test {
 
 //--- test.swift
 // GENERATED-BY: %target-swift-ide-test -print-module -module-to-print=Test -plugin-path %swift-plugin-dir -I %t -source-filename=x -enable-experimental-feature SafeInteropWrappers -Xcc -Wno-nullability-completeness > %t/Test-interface.swift && %swift-function-caller-generator Test %t/Test-interface.swift
-// GENERATED-HASH: 4add983f4582598af9fb1ebe8326aa2d92603cb7366ecb416251b44680eb1fbb
+// GENERATED-HASH: 8cd0959bf10eacc973726b4f80bd930d36ad0831434aa00ab9368fa107713b69
 import Test
 
 func call_simple(_ len: Int32, _ len2: Int32, _ p: UnsafeMutablePointer<Int32>!) -> UnsafeMutablePointer<Int32>! {
@@ -261,7 +261,8 @@ func call_lifetimeboundEscapableReturn(_ len: Int32, _ p: UnsafeMutablePointer<I
   return unsafe lifetimeboundEscapableReturn(len, p)
 }
 
-// expected-error@+1{{a function with a ~Escapable result requires '@_lifetime(...)'}}
+// expected-stable-error@+2{{a function with a ~Escapable result requires '@_lifetime(...)'}}
+// expected-experimental-error@+1{{a function with a ~Escapable result requires '@_lifetime(...)'}}
 func call_lifetimeboundNonescapableReturn(_ len: Int32, _ p: UnsafeMutablePointer<Int32>!) -> NonescapableStruct {
   return unsafe lifetimeboundNonescapableReturn(len, p)
 }
@@ -276,21 +277,19 @@ func call_oneLifetimeboundOneEscapable(_ len: Int32, _ len2: Int32, _ p: UnsafeM
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_complexExpr(_ len: Int32, _ offset: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_complexExpr(_ len: Int32, _ offset: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {
   // expected-stable-error@+3{{missing argument for parameter #4 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>'}}
-  return complexExpr(len, offset, &p)
+  return complexExpr(len, offset, p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_constant(_ p: inout MutableSpan<Int32>?) -> MutableSpan<Int32>? {
-  // expected-stable-error@+2{{cannot convert value of type 'UnsafeMutablePointer<MutableSpan<Int32>?>' to expected argument type 'UnsafeMutablePointer<Int32>'}}
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_constant(_ p: consuming MutableSpan<Int32>?) -> MutableSpan<Int32>? {
+  // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>?' to expected argument type 'UnsafeMutablePointer<Int32>?'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>?'}}
-  return constant(&p)
+  return constant(p)
 }
 
 @_alwaysEmitIntoClient @_disfavoredOverload public func call_lifetimeboundEscapableReturn(_ p: UnsafeMutableBufferPointer<Int32>) -> EscapableStruct {
@@ -301,22 +300,19 @@ func call_oneLifetimeboundOneEscapable(_ len: Int32, _ len2: Int32, _ p: UnsafeM
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_lifetimeboundNonescapableReturn(_ p: inout MutableSpan<Int32>) -> NonescapableStruct {
-  // expected-stable-error@+3{{missing argument for parameter #2 in call}}
-  // expected-stable-error@+2{{cannot convert value of type 'UnsafeMutablePointer<MutableSpan<Int32>>' to expected argument type 'UnsafeMutablePointer<Int32>'}}
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_lifetimeboundNonescapableReturn(_ p: consuming MutableSpan<Int32>) -> NonescapableStruct {
+  // expected-stable-error@+2{{missing argument for parameter #2 in call}}
   // expected-stable-error@+1{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
-  return lifetimeboundNonescapableReturn(&p)
+  return lifetimeboundNonescapableReturn(p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p, copy s)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_lifetimeboundNonescapableReturnDoubleBounds(_ p: inout MutableSpan<Int32>, _ s: NonescapableStruct) -> NonescapableStruct {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_lifetimeboundNonescapableReturnDoubleBounds(_ p: consuming MutableSpan<Int32>, _ s: NonescapableStruct) -> NonescapableStruct {
   // expected-stable-error@+3{{missing argument for parameter #3 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'NonescapableStruct' to expected argument type 'UnsafeMutablePointer<Int32>'}}
   // expected-stable-error@+1{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
-  return lifetimeboundNonescapableReturnDoubleBounds(&p, s)
+  return lifetimeboundNonescapableReturnDoubleBounds(p, s)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
@@ -328,62 +324,55 @@ func call_oneLifetimeboundOneEscapable(_ len: Int32, _ len2: Int32, _ p: UnsafeM
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_nonnull(_ len: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_nonnull(_ len: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {
   // expected-stable-error@+3{{missing argument for parameter #3 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>' to return type 'MutableSpan<Int32>'}}
-  return nonnull(len, &p)
+  return nonnull(len, p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_nullUnspecified(_ len: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_nullUnspecified(_ len: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {
   // expected-stable-error@+3{{missing argument for parameter #3 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>'}}
-  return nullUnspecified(len, &p)
+  return nullUnspecified(len, p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_nullable(_ len: Int32, _ p: inout MutableSpan<Int32>?) -> MutableSpan<Int32>? {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_nullable(_ len: Int32, _ p: consuming MutableSpan<Int32>?) -> MutableSpan<Int32>? {
   // expected-stable-error@+3{{missing argument for parameter #3 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>?' to expected argument type 'Int32'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>?'}}
-  return nullable(len, &p)
+  return nullable(len, p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_oneLifetimeboundOneEscapable(_ len: Int32, _ p: inout MutableSpan<Int32>, _ p2: UnsafeMutableBufferPointer<Int32>) -> MutableSpan<Int32> {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_oneLifetimeboundOneEscapable(_ len: Int32, _ p: consuming MutableSpan<Int32>, _ p2: UnsafeMutableBufferPointer<Int32>) -> MutableSpan<Int32> {
   // expected-stable-error@+4{{cannot convert value of type 'UnsafeMutableBufferPointer<Int32>' to expected argument type 'UnsafeMutablePointer<Int32>'}}
   // expected-stable-error@+3{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
   // expected-stable-error@+2{{missing arguments for parameters #4, #5 in call}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>'}}
-  return unsafe oneLifetimeboundOneEscapable(len, &p, p2)
+  return unsafe oneLifetimeboundOneEscapable(len, p, p2)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_shared(_ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {
-  // expected-stable-error@+4{{missing argument for parameter #2 in call}}
-  // expected-stable-error@+3{{cannot convert value of type 'UnsafeMutablePointer<MutableSpan<Int32>>' to expected argument type 'UnsafeMutablePointer<Int32>'}}
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_shared(_ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {
+  // expected-stable-error@+3{{missing argument for parameter #2 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>'}}
-  return shared(&p)
+  return shared(p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_simple(_ len: Int32, _ p: inout MutableSpan<Int32>) -> MutableSpan<Int32> {
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_simple(_ len: Int32, _ p: consuming MutableSpan<Int32>) -> MutableSpan<Int32> {
   // expected-stable-error@+3{{missing argument for parameter #3 in call}}
   // expected-stable-error@+2{{cannot convert value of type 'MutableSpan<Int32>' to expected argument type 'Int32'}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<Int32>?' to return type 'MutableSpan<Int32>'}}
-  return simple(len, &p)
+  return simple(len, p)
 }

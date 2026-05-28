@@ -161,7 +161,7 @@ uint8_t *__sized_by(size)  bytesized(int size, const uint8_t * p __sized_by(size
 
 // expected-experimental-expansion@+13:85{{
 //   expected-experimental-remark@1{{macro content: |/// This is an auto-generated wrapper for safer interop|}}
-//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_lifetime(p: copy p) @_disfavoredOverload public func charsized(_ p: inout MutableRawSpan) -> MutableRawSpan {|}}
+//   expected-experimental-remark@2{{macro content: |@_alwaysEmitIntoClient @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *) @_lifetime(copy p) @_disfavoredOverload public func charsized(_ p: consuming MutableRawSpan) -> MutableRawSpan {|}}
 //   expected-experimental-remark@3{{macro content: |    let size = Int32(exactly: p.byteCount)!|}}
 //   expected-experimental-remark@4{{macro content: |    let _pPtr = p.withUnsafeMutableBytes {|}}
 //   expected-experimental-remark@5{{macro content: |        unsafe $0|}}
@@ -183,7 +183,7 @@ module Test {
 
 //--- test.swift
 // GENERATED-BY: %target-swift-ide-test -print-module -module-to-print=Test -plugin-path %swift-plugin-dir -I %t -source-filename=x -enable-experimental-feature SafeInteropWrappers -Xcc -Wno-nullability-completeness > %t/Test-interface.swift && %swift-function-caller-generator Test %t/Test-interface.swift
-// GENERATED-HASH: 0c23af22b4f15abcaccef60670329efb19dc926af0d39236ac436bedbc0b587e
+// GENERATED-HASH: 80799fbedcd6f659369a77316f14a775764b3f05e84ca91158f5fedac023eb27
 import Test
 
 
@@ -243,11 +243,11 @@ func call_doublebytesized(_ p: UnsafeMutablePointer<UInt16>!, _ size: Int32) -> 
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)
 @_lifetime(copy p)
-@_lifetime(p: copy p)
-@_alwaysEmitIntoClient @_disfavoredOverload public func call_charsized(_ p: inout MutableRawSpan) -> MutableRawSpan {
-  // expected-stable-error@+2{{missing argument for parameter #2 in call}}
+@_alwaysEmitIntoClient @_disfavoredOverload public func call_charsized(_ p: consuming MutableRawSpan) -> MutableRawSpan {
+  // expected-stable-error@+3{{missing argument for parameter #2 in call}}
+  // expected-stable-error@+2{{cannot convert value of type 'MutableRawSpan' to expected argument type 'UnsafeMutablePointer<CChar>' (aka 'UnsafeMutablePointer<Int8>')}}
   // expected-stable-error@+1{{cannot convert return expression of type 'UnsafeMutablePointer<CChar>?' (aka 'Optional<UnsafeMutablePointer<Int8>>') to return type 'MutableRawSpan'}}
-  return charsized(&p)
+  return charsized(p)
 }
 
 @available(visionOS 1.0, tvOS 12.2, watchOS 5.2, iOS 12.2, macOS 10.14.4, *)

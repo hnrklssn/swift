@@ -38,6 +38,7 @@ protocol ParamInfo: CustomStringConvertible {
   var pointerIndex: SwiftifyExpr { get }
   var nonescaping: Bool { get set }
   var dependencies: [LifetimeDependence] { get set }
+  var isLifetimeDepSource: Bool { get set }
 
   func getBoundsCheckedThunkBuilder(
     _ base: BoundsCheckedThunkBuilder, _ funcDecl: FunctionParts
@@ -77,6 +78,7 @@ struct CxxSpan: ParamInfo {
   var pointerIndex: SwiftifyExpr
   var nonescaping: Bool
   var dependencies: [LifetimeDependence]
+  var isLifetimeDepSource: Bool = false
   var typeMappings: [String: String]
   var original: SyntaxProtocol
 
@@ -91,7 +93,8 @@ struct CxxSpan: ParamInfo {
     case .param(let i):
       return CxxSpanThunkBuilder(
         base: base, index: i - 1, funcDecl: funcDecl,
-        typeMappings: typeMappings, node: original, nonescaping: nonescaping)
+        typeMappings: typeMappings, node: original, nonescaping: nonescaping,
+        isLifetimeDepSource: isLifetimeDepSource)
     case .return:
       if dependencies.isEmpty {
         return base
@@ -111,6 +114,7 @@ struct CountedBy: ParamInfo {
   var sizedBy: Bool
   var nonescaping: Bool
   var dependencies: [LifetimeDependence]
+  var isLifetimeDepSource: Bool = false
   var original: SyntaxProtocol
 
   var description: String {
@@ -128,7 +132,8 @@ struct CountedBy: ParamInfo {
       return CountedOrSizedPointerThunkBuilder(
         base: base, index: i - 1, countExpr: count,
         funcDecl: funcDecl,
-        nonescaping: nonescaping, isSizedBy: sizedBy)
+        nonescaping: nonescaping, isSizedBy: sizedBy,
+        isLifetimeDepSource: isLifetimeDepSource)
     case .return:
       return CountedOrSizedReturnPointerThunkBuilder(
         base: base, countExpr: count,
@@ -310,25 +315,34 @@ func hasOwnershipSpecifier(_ attrType: AttributedTypeSyntax) -> Bool {
   })
 }
 
+enum MutableSpanOwnership {
+  case none      // return value
+  case `inout`   // noescape parameter
+  case consuming // lifetimebound parameter
+}
+
 func transformType(
-  _ prev: TypeSyntax, _ generateSpan: Bool, _ isSizedBy: Bool, _ setMutableSpanInout: Bool
+  _ prev: TypeSyntax, _ generateSpan: Bool, _ isSizedBy: Bool,
+  _ mutableSpanOwnership: MutableSpanOwnership
 ) throws -> TypeSyntax {
   if let optType = prev.as(OptionalTypeSyntax.self) {
     return TypeSyntax(
       optType.with(
         \.wrappedType,
-        try transformType(optType.wrappedType, generateSpan, isSizedBy, setMutableSpanInout)))
+        try transformType(optType.wrappedType, generateSpan, isSizedBy, mutableSpanOwnership)))
   }
   if let impOptType = prev.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-    return try transformType(impOptType.wrappedType, generateSpan, isSizedBy, setMutableSpanInout)
+    return try transformType(impOptType.wrappedType, generateSpan, isSizedBy, mutableSpanOwnership)
   }
   if let attrType = prev.as(AttributedTypeSyntax.self) {
-    // We insert 'inout' by default for MutableSpan, but it shouldn't override existing ownership
-    let setMutableSpanInoutNext = setMutableSpanInout && !hasOwnershipSpecifier(attrType)
+    // We insert a default ownership specifier for MutableSpan, but it shouldn't
+    // override an explicit one already on the type.
+    let nextOwnership: MutableSpanOwnership =
+      hasOwnershipSpecifier(attrType) ? .none : mutableSpanOwnership
     return TypeSyntax(
       attrType.with(
         \.baseType,
-        try transformType(attrType.baseType, generateSpan, isSizedBy, setMutableSpanInoutNext)))
+        try transformType(attrType.baseType, generateSpan, isSizedBy, nextOwnership)))
   }
   let name = try getTypeName(prev)
   let text = name.text
@@ -349,8 +363,12 @@ func transformType(
     } else {
       try replaceTypeName(prev, token)
     }
-  if setMutableSpanInout && generateSpan && kind == .Mutable {
-    return TypeSyntax("inout \(mainType)")
+  if generateSpan && kind == .Mutable {
+    switch mutableSpanOwnership {
+    case .none: break
+    case .inout: return TypeSyntax("inout \(mainType)")
+    case .consuming: return TypeSyntax("consuming \(mainType)")
+    }
   }
   return mainType
 }
@@ -558,8 +576,13 @@ struct CxxSpanThunkBuilder: SpanBoundsThunkBuilder, ParamBoundsThunkBuilder {
   public let typeMappings: [String: String]
   public let node: SyntaxProtocol
   public let nonescaping: Bool
+  public let isLifetimeDepSource: Bool
   let isSizedBy: Bool = false
   let isParameter: Bool = true
+
+  var mutableSpanOwnership: MutableSpanOwnership {
+    isLifetimeDepSource ? .consuming : .inout
+  }
 
   func buildBasicBoundsChecks(_ extractedCountArgs: inout Set<Int>) throws -> [CodeBlockItemSyntax.Item] {
     return try base.buildBasicBoundsChecks(&extractedCountArgs)
@@ -657,12 +680,14 @@ protocol BoundsThunkBuilder: BoundsCheckedThunkBuilder {
   var oldType: TypeSyntax { get }
   var newType: TypeSyntax { get throws }
   var funcDecl: FunctionParts { get }
+  var mutableSpanOwnership: MutableSpanOwnership { get }
 }
 
 extension BoundsThunkBuilder {
   var signature: FunctionSignatureSyntax {
     funcDecl.signature
   }
+  var mutableSpanOwnership: MutableSpanOwnership { .none }
 }
 
 protocol SpanBoundsThunkBuilder: BoundsThunkBuilder {
@@ -717,8 +742,12 @@ extension SpanBoundsThunkBuilder {
       let mainType = replaceBaseType(
         oldType,
         TypeSyntax("\(raw: mutablePrefix)Span<\(raw: strippedArg)>"))
-      if !isConst && isParameter {
-        return TypeSyntax("inout \(mainType)")
+      if !isConst {
+        switch mutableSpanOwnership {
+        case .none: break
+        case .inout: return TypeSyntax("inout \(mainType)")
+        case .consuming: return TypeSyntax("consuming \(mainType)")
+        }
       }
       return mainType
     }
@@ -737,7 +766,7 @@ extension PointerBoundsThunkBuilder {
 
   var newType: TypeSyntax {
     get throws {
-      return try transformType(oldType, generateSpan, isSizedBy, isParameter)
+      return try transformType(oldType, generateSpan, isSizedBy, mutableSpanOwnership)
     }
   }
 
@@ -851,9 +880,14 @@ struct CountedOrSizedPointerThunkBuilder: ParamBoundsThunkBuilder, PointerBounds
   public let funcDecl: FunctionParts
   public let nonescaping: Bool
   public let isSizedBy: Bool
+  public let isLifetimeDepSource: Bool
   let isParameter: Bool = true
 
   var generateSpan: Bool { nonescaping }
+
+  var mutableSpanOwnership: MutableSpanOwnership {
+    isLifetimeDepSource ? .consuming : .inout
+  }
 
   func buildFunctionSignature(_ argTypes: [Int: TypeSyntax?], _ returnType: TypeSyntax?) throws
     -> FunctionSignatureSyntax
@@ -1392,12 +1426,29 @@ func setLifetimeDependencies(
   if args.isEmpty {
     return
   }
-  for i in 0...args.count - 1 where lifetimeDependencies.keys.contains(args[i].pointerIndex) {
-    args[i].dependencies = lifetimeDependencies[args[i].pointerIndex]!
+  var sources = Set<SwiftifyExpr>()
+  for deps in lifetimeDependencies.values {
+    for dep in deps {
+      sources.insert(dep.dependsOn)
+    }
+  }
+  for i in 0...args.count - 1 {
+    if lifetimeDependencies.keys.contains(args[i].pointerIndex) {
+      args[i].dependencies = lifetimeDependencies[args[i].pointerIndex]!
+    }
+    if sources.contains(args[i].pointerIndex) {
+      args[i].isLifetimeDepSource = true
+    }
   }
 }
 
 func isInout(_ type: TypeSyntax) -> Bool {
+  if let optType = type.as(OptionalTypeSyntax.self) {
+    return isInout(optType.wrappedType)
+  }
+  if let impOptType = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+    return isInout(impOptType.wrappedType)
+  }
   guard let attr = type.as(AttributedTypeSyntax.self) else {
     return false
   }
@@ -1508,11 +1559,11 @@ func containsLifetimeAttr(_ attrs: AttributeListSyntax, for paramName: TokenSynt
   return false
 }
 
-// Mutable[Raw]Span parameters need explicit @lifetime annotations since they are inout
+// Inout Mutable[Raw]Span parameters need an explicit @_lifetime(p: copy p)
 func paramLifetimes(_ newSignature: FunctionSignatureSyntax) -> [LabeledExprSyntax] {
   var defaultLifetimes: [LabeledExprSyntax] = []
   for param in newSignature.parameterClause.parameters {
-    if !isMutableSpan(param.type) {
+    guard isMutableSpan(param.type), isInout(param.type) else {
       continue
     }
     let paramName = param.name
