@@ -6757,12 +6757,27 @@ constructResult(const llvm::TinyPtrVector<Decl *> &interfaces,
   if (impls.size() > 1) {
     llvm::sort(impls, OrderDecls());
 
+    auto *frontAttr = impls.front()
+                          ->getAttrs()
+                          .getAttribute<ObjCImplementationAttr>(
+                              /*AllowInvalid=*/true);
+    bool frontIsSafe = frontAttr && frontAttr->isSafeInteropImplementation();
+
     auto &diags = interfaces.front()->getASTContext().Diags;
     for (auto extraImpl : llvm::ArrayRef<Decl *>(impls).drop_front()) {
       auto attr = extraImpl->getAttrs().getAttribute<ObjCImplementationAttr>(
           /*AllowInvalid=*/true);
       if (attr->isInvalid())
         continue;
+
+      // `@c @implementation(safe)` is expected to coexist with a
+      // macro-expanded peer of the same C name: the peer carries
+      // `@c @implementation` and provides the actual C entry point, while
+      // the safe original is a regular Swift symbol that the peer forwards
+      // to. Don't diagnose either as a duplicate of the other.
+      if (attr->isSafeInteropImplementation() || frontIsSafe)
+        continue;
+
       attr->setInvalid();
 
       // @objc @implementations for categories are diagnosed as category
@@ -6858,6 +6873,33 @@ static void lookupRelatedFuncs(AbstractFunctionDecl *func,
                                     UnqualifiedLookupRequest{descriptor}, {});
     for (const auto &result : lookup) {
       results.push_back(result.getValueDecl());
+    }
+
+    // `@c @implementation(safe)` functions have a different parameter list
+    // (e.g. `Span<CInt>` instead of `(UnsafePointer<CInt>, CInt)`) from the
+    // imported C declaration, so a name-matched lookup of `func->getName()`
+    // will not return the imported decl when their parameter counts differ.
+    // Fall back to a base-name lookup so that the cdecl-name match below has
+    // a chance to find the C interface, deduplicating to avoid surfacing the
+    // same imported decl twice (which would otherwise look like an overload
+    // and abort matching).
+    if (auto *implAttr =
+            func->getAttrs().getAttribute<ObjCImplementationAttr>(
+                /*AllowInvalid=*/true)) {
+      if (implAttr->isSafeInteropImplementation()) {
+        llvm::SmallPtrSet<ValueDecl *, 4> already(results.begin(),
+                                                  results.end());
+        UnqualifiedLookupDescriptor baseDesc(
+            DeclNameRef(swiftName.getBaseName()), func->getDeclContext(),
+            func->getLoc(), options);
+        auto baseLookup =
+            evaluateOrDefault(func->getASTContext().evaluator,
+                              UnqualifiedLookupRequest{baseDesc}, {});
+        for (const auto &result : baseLookup) {
+          if (already.insert(result.getValueDecl()).second)
+            results.push_back(result.getValueDecl());
+        }
+      }
     }
   }
 }
@@ -8072,6 +8114,11 @@ bool ClangImporter::isSwiftFunctionWrapper(
 bool ClangImporter::Implementation::isSwiftFunctionWrapper(
     const clang::RecordDecl *decl) {
   return decl->getIdentifier() && decl->getName() == "__SwiftFunctionWrapper";
+}
+
+void ClangImporter::attachUnswiftifyForSafeImplementation(
+    AbstractFunctionDecl *safeSwiftDecl) {
+  Impl.attachUnswiftifyForSafeImplementation(safeSwiftDecl);
 }
 
 bool ClangImporter::isDeconstructedSwiftClosure(const clang::Type *type) const {

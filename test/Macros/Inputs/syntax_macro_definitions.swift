@@ -1723,6 +1723,8 @@ public struct ConditionalCopyableMacro: ExtensionMacro {
     let ext: DeclSyntax =
       "extension \(type.trimmed): Copyable where T: Copyable {}"
     return [ext.cast(ExtensionDeclSyntax.self)]
+  }
+}
 
 public struct UnstringifyPeerMacro: PeerMacro {
   public static func expansion(
