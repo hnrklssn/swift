@@ -2490,6 +2490,7 @@ public:
 
     case MacroDefinition::Kind::Invalid:
     case MacroDefinition::Kind::Builtin:
+    case MacroDefinition::Kind::Internal:
     case MacroDefinition::Kind::Expanded:
       // Nothing else to check here.
       break;
