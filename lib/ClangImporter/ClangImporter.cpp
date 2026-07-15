@@ -6883,6 +6883,12 @@ findFunctionInterfaceAndImplementation(AbstractFunctionDecl *func) {
   SmallVector<ValueDecl *, 4> results;
   lookupRelatedFuncs(func, results);
 
+  // Hack: if `func` is from a macro expansion it's not registered with the full
+  // name in the SourceLookupCache yet while we are typechecking the expansion,
+  // so it may not be found.
+  if (!is_contained(results, func))
+    results.push_back(func);
+
   // Classify the `results` as either the interface or an implementation.
   // (Multiple implementations are invalid but utterable.)
   Decl *interface = nullptr;
